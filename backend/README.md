@@ -1,15 +1,14 @@
-# Projet final d'objets connectés 2
-par William Boudreault
+# Backend du projet final d'objet connecté
 
-### Matériel nécessaire
-- Arduino NANO 33 IoT
-- DHT11
+### Serveur de développement
+Lancer `npm run dev` dans l'invite de commande pour lancer le projet en
+mode développement. Lorsqu'il est en mode développement, le serveur se 
+rafraîchit lors de la modification de fichier.
 
-### Connection nécessaires
-- DHT11 connecté sur la broche 2.
+### Compiler
+Lancer `npm run build` dans l'invite de commande pour lancer la compilation
+du projet. Le projet doit être compilé puisqu'il est écrit en typescript.
 
-## Technologies utilisées
-- Express
-- Typescript
-- Mysql
-- Arduino
+### Lancer la version compilé
+Lancer `npm start` dans l'invite de commande pour lancer la version compilé
+du code.
