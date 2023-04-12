@@ -1,2 +1,15 @@
-# William Boudreault
-Ceci est mon projet final de objet connecté 2.
+# Projet final d'objets connectés 2
+par William Boudreault
+
+### Matériel nécessaire
+- Arduino NANO 33 IoT
+- DHT11
+
+### Connection nécessaires
+- DHT11 connecté sur la broche 2.
+
+## Technologies utilisées
+- Express
+- Typescript
+- Mysql
+- Arduino
