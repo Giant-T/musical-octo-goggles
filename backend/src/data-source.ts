@@ -1,5 +1,6 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
+import Temperature from "./entity/Temperature"
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -10,7 +11,7 @@ export const AppDataSource = new DataSource({
   database: "objet_connect2",
   synchronize: true,
   logging: false,
-  entities: [],
+  entities: [Temperature],
   migrations: [],
   subscribers: [],
 })

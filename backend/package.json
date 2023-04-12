@@ -1,8 +1,7 @@
 {
    "scripts": {
-      "start": "ts-node src/index.ts",
+      "start": "nodemon src/index.ts",
       "build": "npx tsc",
-      "dev": "concurrently \"npx tsc --watch\" \"nodemon -q build/index.js\"",
       "typeorm": "typeorm-ts-node-commonjs"
    },
    "dependencies": {
