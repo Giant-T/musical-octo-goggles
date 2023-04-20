@@ -1,19 +1,18 @@
 import * as express from "express"
 import * as bodyParser from "body-parser"
-import { NextFunction, Request, Response } from "express"
+import { Request, Response } from "express"
 import { AppDataSource } from "./data-source"
 import { TemperatureController } from "./controller/TemperatureController"
 
 AppDataSource.initialize().then(async () => {
-
-  // creation de l'application express
   const app = express();
   const port = 3001;
   app.use(bodyParser.json());
 
   const temperatureController = new TemperatureController();
 
-  app.get("/temperature/all", async (res: Response) => {
+  // Routes
+  app.get("/temperature/all", async (_, res: Response) => {
     const result = await temperatureController.all();
     res.json(result);
   });
