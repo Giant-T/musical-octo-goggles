@@ -174,7 +174,7 @@ void envoie_donnees() {
     String sortie;
     StaticJsonDocument<16> json;
 
-    json["value"] = valeur;
+    json["value_celsius"] = valeur;
     serializeJson(json, sortie);
     String content_type = "application/json";
     client.post("/temperature", content_type, sortie);
