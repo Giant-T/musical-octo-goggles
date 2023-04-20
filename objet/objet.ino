@@ -177,7 +177,7 @@ void envoie_donnees() {
     json["value_celsius"] = valeur;
     serializeJson(json, sortie);
     String content_type = "application/json";
-    client.post("/temperature", content_type, sortie);
+    client.post("/api/temperature", content_type, sortie);
     int etat_http = client.responseStatusCode();
     client.responseBody();
 
