@@ -1,4 +1,4 @@
-module gobjetconnect/m
+module github.com/Giant-T/musical-octo-goggles
 
 go 1.19
 
