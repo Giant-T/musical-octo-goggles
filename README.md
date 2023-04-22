@@ -9,7 +9,7 @@ par William Boudreault
 - DHT11 connecté sur la broche 2.
 
 ## Technologies utilisées
-- Express
-- Typescript
+- Go & Gin & Gorm
+- Typescript & React
 - Mysql
 - Arduino
