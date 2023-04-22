@@ -10,7 +10,7 @@ import (
 )
 
 type createManyDto struct {
-  Id           uint `json:"id" `
+  Id           uint `json:"id" binding:"excluded_with_all"`
 	ValueCelsius float32   `json:"value_celsius" binding:"required"`
 	Date         time.Time `json:"date" binding:"required"`
 }
