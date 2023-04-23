@@ -19,6 +19,7 @@ type PublicController struct {
 	Database *gorm.DB
 }
 
+// Retourne tous les temperatures contenues dans la base de données.
 func (controller *PublicController) GetAllTemperature(context *gin.Context) {
 	var temperatures []schemas.Temperature
 
@@ -29,6 +30,7 @@ func (controller *PublicController) GetAllTemperature(context *gin.Context) {
 	context.JSON(http.StatusOK, temperatures)
 }
 
+// Insert une nouvelle temperature dans la base de données.
 func (controller *PublicController) CreateTemperature(context *gin.Context) {
 	body := schemas.Temperature{}
 
@@ -41,6 +43,7 @@ func (controller *PublicController) CreateTemperature(context *gin.Context) {
 	context.JSON(http.StatusCreated, &body)
 }
 
+// Insert plusieurs températures dans la base de données.
 func (controller *PublicController) CreateManyTemperatures(context *gin.Context) {
 	var body []createManyDto
 

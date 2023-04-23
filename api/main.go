@@ -1,18 +1,23 @@
 package main
 
 import (
+	"os"
+
 	"github.com/Giant-T/musical-octo-goggles/api"
 	"github.com/Giant-T/musical-octo-goggles/schemas"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func main() {
+  godotenv.Load();
+
 	println("Debut du programme!")
 
 	println("Connection a la base de donnees...")
-	dns := "root:mysql@tcp(127.0.0.1:3306)/testobj?charset=utf8&parseTime=True&loc=Local"
+	dns := os.Getenv("DATABASE_URL")
 	controller := api.PublicController{}
 	var err error
 	controller.Database, err = gorm.Open(mysql.Open(dns), &gorm.Config{})
