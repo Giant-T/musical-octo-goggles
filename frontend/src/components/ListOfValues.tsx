@@ -1,15 +1,15 @@
 import { DataGrid } from "@mui/x-data-grid";
-import { GridColDef } from "@mui/x-data-grid/models";
+import { GridColDef, GridValueFormatterParams } from "@mui/x-data-grid/models";
 import { ReactElement, useEffect, useState } from "react";
-import Value from "../models/value";
+import Temperature from "../models/temperature";
 import RequestsService from "../services/requests.service";
 
 const ListOfValues = (): ReactElement => {
-  const [values, setValues] = useState(Array<Value>());
+  const [values, setValues] = useState(Array<Temperature>());
 
   useEffect(() => {
     new RequestsService()
-      .get<[Value]>("liste-valeurs.php")
+      .get<[Temperature]>("all")
       .then((response) => {
         setValues(response.data);
       })
@@ -17,10 +17,15 @@ const ListOfValues = (): ReactElement => {
   }, []);
 
   const columns: GridColDef[] = [
-    { field: "value", headerName: "Valeur", width: 75 },
-    { field: "description", headerName: "Description", minWidth: 200, flex: 1 },
-    { field: "ip", headerName: "Adresse IP", width: 200 },
-    { field: "time", headerName: "Temps de capture", width: 200 },
+    { field: "value_celsius", headerName: "Température", flex: 1, valueFormatter: (row) => `${row.value} ℃` },
+    {
+      field: "date", headerName: "Date", flex: 2,
+      valueFormatter: (row: GridValueFormatterParams<Date>) => {
+        const date = new Date(row.value);
+
+        return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+      }
+    },
   ];
 
   return (

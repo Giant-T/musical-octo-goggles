@@ -5,6 +5,7 @@ import (
 
 	"github.com/Giant-T/musical-octo-goggles/api"
 	"github.com/Giant-T/musical-octo-goggles/schemas"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
@@ -12,7 +13,7 @@ import (
 )
 
 func main() {
-  godotenv.Load();
+	godotenv.Load()
 
 	println("Debut du programme!")
 
@@ -37,12 +38,17 @@ func main() {
 
 	server := gin.Default()
 
-    // Definition des routes
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+
+	server.Use(cors.New(config))
+
+	// Definition des routes
 	server.GET("/temperature/all", controller.GetAllTemperature)
 	server.POST("/temperature", controller.CreateTemperature)
 	server.POST("/temperature/many", controller.CreateManyTemperatures)
 
-    err = server.Run(":8080")
+	err = server.Run(":8080")
 
 	if err != nil {
 		panic("Impossible de demarrer le serveur http.")
