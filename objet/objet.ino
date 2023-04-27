@@ -27,6 +27,13 @@ HttpClient client = HttpClient(wifi, ip, port);
 
 DHT dht(2, DHT11);
 
+#define PIN_MOTEUR 3
+
+// Capteur ultrasonique
+#define PIN_TRIG 4
+#define PIN_ECHO 5
+int distance;
+
 const unsigned long delai_ms = 10000;  // dix secondes
 unsigned long dernier_ms = 0;
 
@@ -58,13 +65,21 @@ void setup() {
     print_wifi_status();  // you're connected now, so print out the status
 
     dht.begin();
+
+    pinMode(PIN_MOTEUR, OUTPUT);
     pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(PIN_TRIG, OUTPUT);
+    pinMode(PIN_ECHO, INPUT);
 }
 
 void loop() {
     WiFiClient client = server.available();  // listen for incoming clients
 
     gerer_requetes(client);
+    calculer_dist();
+
+    Serial.print("Distance cm: ");
+    Serial.println(distance);
 
     envoie_donnees();
 }
@@ -128,6 +143,19 @@ void gerer_requetes(WiFiClient client) {
     }
 }
 
+void calculer_dist() {
+    digitalWrite(PIN_TRIG, LOW);
+    delayMicroseconds(2);
+
+    digitalWrite(PIN_TRIG, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(PIN_TRIG, LOW);
+
+    long duration = pulseIn(PIN_ECHO, HIGH);
+
+    distance = duration * 0.034 / 2;
+}
+
 void print_wifi_status() {
     // print the SSID of the network you're attached to:
     Serial.print("SSID: ");
@@ -163,6 +191,8 @@ void envoie_donnees() {
     }
     dernier_ms = ms;
     float valeur = dht.readTemperature();
+    Serial.print("Temperature celsius: ");
+    Serial.println(valeur);
 
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println(valeur);
