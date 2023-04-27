@@ -20,12 +20,13 @@ int status = WL_IDLE_STATUS;
 WiFiServer server(80);
 
 // Variables du serveur raspberry pi
-char ip[] = "172.19.240.8";
-int port = 80;
+char ip[] = "172.19.240.10";
+int port = 8080;
 WiFiClient wifi;
 HttpClient client = HttpClient(wifi, ip, port);
 
 DHT dht(2, DHT11);
+float temperature;
 
 #define PIN_MOTEUR 3
 
@@ -80,8 +81,9 @@ void loop() {
 
     Serial.print("Distance cm: ");
     Serial.println(distance);
+    temperature = dht.readTemperature();
 
-    envoie_donnees();
+    envoie_donnees(temperature);
 }
 
 void gerer_requetes(WiFiClient client) {
@@ -182,7 +184,7 @@ void print_wifi_status() {
  * Fonction qui permet l'envoie des donnees seulement si le delais est depassé.
  * Auteur: William Boudreault
  */
-void envoie_donnees() {
+void envoie_donnees(float valeur) {
     unsigned long ms = millis();
     bool delais_depasse = ms - dernier_ms > delai_ms;
 
@@ -190,9 +192,6 @@ void envoie_donnees() {
         return;
     }
     dernier_ms = ms;
-    float valeur = dht.readTemperature();
-    Serial.print("Temperature celsius: ");
-    Serial.println(valeur);
 
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println(valeur);
@@ -207,7 +206,7 @@ void envoie_donnees() {
     json["value_celsius"] = valeur;
     serializeJson(json, sortie);
     String content_type = "application/json";
-    client.post("/api/temperature", content_type, sortie);
+    client.post("/temperature", content_type, sortie);
     int etat_http = client.responseStatusCode();
     client.responseBody();
 

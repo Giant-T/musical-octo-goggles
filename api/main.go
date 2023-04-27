@@ -37,12 +37,12 @@ func main() {
 
 	server := gin.Default()
 
-  // Definition des routes
+    // Definition des routes
 	server.GET("/temperature/all", controller.GetAllTemperature)
 	server.POST("/temperature", controller.CreateTemperature)
 	server.POST("/temperature/many", controller.CreateManyTemperatures)
 
-  err = server.Run(":8080")
+    err = server.Run(":8080")
 
 	if err != nil {
 		panic("Impossible de demarrer le serveur http.")
