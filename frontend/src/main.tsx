@@ -1,3 +1,4 @@
+import { MantineProvider } from "@mantine/core";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {
@@ -30,11 +31,25 @@ const router = createBrowserRouter([
   },
 ]);
 
+let mode: 'light' | 'dark' = 'light';
+
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  mode = 'dark';
+}
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{
+        colorScheme: mode
+      }}
+    >
+      <RouterProvider router={router} />
+    </MantineProvider>
   </React.StrictMode>
 );

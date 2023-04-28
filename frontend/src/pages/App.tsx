@@ -1,32 +1,12 @@
-import { Button } from "@mui/material";
-import axios from "axios";
-import ListOfValues from "../components/ListOfValues";
+import { Title } from "@mantine/core";
+import ListOfTemperatures from "../components/ListOfTemperatures";
 import Page from "../components/Page";
-import RequestsService from "../services/requests.service";
 
 function App() {
   return (
     <Page>
-      Vous êtes sur un site de malade!
-      <ListOfValues />
-      <Button
-        variant="contained"
-        color="success"
-        onClick={() => {
-          new RequestsService().get("modifier-led.php?open=1");
-        }}
-      >
-        Ouvrir la led
-      </Button>
-      <Button
-        variant="contained"
-        color="error"
-        onClick={() => {
-          new RequestsService().get("modifier-led.php?open=0");
-        }}
-      >
-        Fermer la led
-      </Button>
+      <Title>Liste des températures</Title>
+      <ListOfTemperatures />
     </Page>
   );
 }
