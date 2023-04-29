@@ -9,6 +9,7 @@ import {
   Group,
 } from '@mantine/core';
 import { Link } from 'react-router-dom';
+import { Notifications } from '@mantine/notifications';
 
 export default function Page(props: PropsWithChildren) {
   const theme = useMantineTheme();
@@ -35,6 +36,7 @@ export default function Page(props: PropsWithChildren) {
         </Header>
       }
     >
+      <Notifications />
       {props.children}
     </AppShell>
   );
