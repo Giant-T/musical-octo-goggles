@@ -7,7 +7,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Page404 from "./pages/404";
-import Page500 from "./pages/500";
+import Activation from "./pages/Activation";
 import App from "./pages/App";
 
 const router = createBrowserRouter([
@@ -20,8 +20,8 @@ const router = createBrowserRouter([
     element: <Page404 />,
   },
   {
-    path: "/500",
-    element: <Page500 />,
+    path: "/activation",
+    element: <Activation />
   },
   {
     path: "*",
