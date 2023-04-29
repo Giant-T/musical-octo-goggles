@@ -21,7 +21,7 @@ const ListOfTemperatures = (): ReactElement => {
     if (!temperatures) return;
 
     const rows: ReactElement[] = temperatures
-      .slice((activePage - 1) * pageSize, (activePage - 1) * pageSize + pageSize)
+      .slice((activePage - 1) * pageSize, activePage * pageSize)
       .map((element) => {
         const date = new Date(element.date);
         return (
@@ -50,7 +50,7 @@ const ListOfTemperatures = (): ReactElement => {
           </Table>
           <Pagination
             value={activePage}
-            total={temperatures!.length / pageSize}
+            total={Math.floor(temperatures!.length / pageSize)}
             onChange={setPage}
           />
         </>
