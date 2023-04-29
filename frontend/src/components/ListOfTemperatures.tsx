@@ -1,4 +1,4 @@
-import { Loader, Pagination, Stack, Table } from "@mantine/core";
+import { Loader, Pagination, Stack, Table, Text } from "@mantine/core";
 import { ReactElement, useEffect, useState } from "react";
 import Temperature from "../models/temperature";
 import RequestsService from "../services/requests.service";
@@ -6,6 +6,7 @@ import RequestsService from "../services/requests.service";
 const ListOfTemperatures = (): ReactElement => {
   const [temperatures, setTemperatures] = useState<Temperature[] | null>(null);
   const [activePage, setPage] = useState(1);
+  const [cantAccess, setCantAccess] = useState(false);
   const pageSize = 5;
 
   useEffect(() => {
@@ -14,7 +15,9 @@ const ListOfTemperatures = (): ReactElement => {
       .then((response) => {
         setTemperatures(response.data);
       })
-      .catch((_) => alert("Impossible d'obtenir les données."));
+      .catch((_) => {
+        setCantAccess(true);
+      });
   }, []);
 
   const calculateRows = () => {
@@ -55,8 +58,11 @@ const ListOfTemperatures = (): ReactElement => {
           />
         </>
       }
-      {!temperatures &&
+      {(!temperatures && !cantAccess) &&
         <Loader />
+      }
+      {cantAccess &&
+        <Text>Impossible d'accèder aux données</Text>
       }
     </Stack>
   );
