@@ -53,7 +53,7 @@ const ListOfTemperatures = (): ReactElement => {
           </Table>
           <Pagination
             value={activePage}
-            total={Math.floor(temperatures!.length / pageSize)}
+            total={Math.ceil(temperatures!.length / pageSize)}
             onChange={setPage}
           />
         </>
