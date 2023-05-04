@@ -20,7 +20,7 @@ int status = WL_IDLE_STATUS;
 WiFiServer server(80);
 
 // Variables du serveur raspberry pi
-char ip[] = "172.19.240.10";
+char ip[] = "172.19.240.2";
 int port = 8080;
 WiFiClient wifi;
 HttpClient client = HttpClient(wifi, ip, port);
