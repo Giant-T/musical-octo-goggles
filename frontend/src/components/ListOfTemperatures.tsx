@@ -1,4 +1,5 @@
-import { Loader, Pagination, Stack, Table, Text } from "@mantine/core";
+import { Group, Loader, Pagination, Select, Stack, Table, Text } from "@mantine/core";
+import { IconArrowDown } from "@tabler/icons-react";
 import { ReactElement, useEffect, useState } from "react";
 import Temperature from "../models/temperature";
 import RequestsService from "../services/requests.service";
@@ -7,7 +8,7 @@ const ListOfTemperatures = (): ReactElement => {
   const [temperatures, setTemperatures] = useState<Temperature[] | null>(null);
   const [activePage, setPage] = useState(1);
   const [cantAccess, setCantAccess] = useState(false);
-  const pageSize = 5;
+  const [pageSize, setPageSize] = useState(5);
 
   useEffect(() => {
     new RequestsService()
@@ -51,11 +52,20 @@ const ListOfTemperatures = (): ReactElement => {
             </thead>
             <tbody>{calculateRows()}</tbody>
           </Table>
-          <Pagination
-            value={activePage}
-            total={Math.ceil(temperatures!.length / pageSize)}
-            onChange={setPage}
-          />
+          <Group>
+            <Select
+              value={pageSize.toString()}
+              width={10}
+              defaultValue="5"
+              data={["5", "10", "15", "20"]}
+              onChange={(value) => setPageSize(Number(value ?? 5))}
+            />
+            <Pagination
+              value={activePage}
+              total={Math.ceil(temperatures!.length / pageSize)}
+              onChange={setPage}
+            />
+          </Group>
         </>
       }
       {(!temperatures && !cantAccess) &&
