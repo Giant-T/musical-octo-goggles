@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
-type createManyDto struct {
-  Id           uint `json:"id" binding:"excluded_with_all"`
+type createManyTemperaturesDto struct {
+	Id           uint      `json:"id" binding:"excluded_with_all"`
 	ValueCelsius float32   `json:"value_celsius" binding:"required"`
 	Date         time.Time `json:"date" binding:"required"`
 }
@@ -45,7 +45,7 @@ func (controller *PublicController) CreateTemperature(context *gin.Context) {
 
 // Insert plusieurs températures dans la base de données.
 func (controller *PublicController) CreateManyTemperatures(context *gin.Context) {
-	var body []createManyDto
+	var body []createManyTemperaturesDto
 
 	if err := context.BindJSON(&body); err != nil {
 		context.AbortWithError(http.StatusBadRequest, err)
@@ -54,4 +54,10 @@ func (controller *PublicController) CreateManyTemperatures(context *gin.Context)
 
 	controller.Database.Model(&schemas.Temperature{}).Create(&body)
 	context.JSON(http.StatusCreated, &body)
+}
+
+func (controller *PublicController) InsertIntrusion(context *gin.Context) {
+	var json schemas.Intrusion
+	controller.Database.Create(&json)
+	context.JSON(http.StatusCreated, &json)
 }

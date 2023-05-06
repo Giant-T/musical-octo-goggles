@@ -28,7 +28,7 @@ func main() {
 	}
 
 	println("Migration de la base de donnees...")
-	err = controller.Database.AutoMigrate(&schemas.Temperature{})
+	err = controller.Database.AutoMigrate(&schemas.Temperature{}, &schemas.Intrusion{})
 
 	if err != nil {
 		panic("Impossible de faire la migration de la base de donnees.")
@@ -47,6 +47,7 @@ func main() {
 	server.GET("/temperature/all", controller.GetAllTemperature)
 	server.POST("/temperature", controller.CreateTemperature)
 	server.POST("/temperature/many", controller.CreateManyTemperatures)
+	server.POST("/intrusion", controller.InsertIntrusion)
 
 	err = server.Run(":8080")
 
