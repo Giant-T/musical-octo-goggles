@@ -10,4 +10,4 @@ rm backup.sql
 # https://stackoverflow.com/questions/1885101/delete-data-from-all-tables-in-mysql
 # Suppression des données.
 mysqldump -d --add-drop-table -uusager -pmotdepasse1234 objet_connect2 > objet_connect2.sql
-mysql -uusager -pmotdepasse1234 objet_connect2 < database.sql
+mysql -uusager -pmotdepasse1234 objet_connect2 < objet_connect2.sql
