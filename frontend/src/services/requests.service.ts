@@ -5,16 +5,14 @@ export default class RequestsService {
 
   constructor() {
     // source: https://stackoverflow.com/questions/35469836/detecting-production-vs-development-react-at-runtime
-    // if (
-    //   !import.meta.env.NODE_ENV ||
-    //   import.meta.env.NODE_ENV === "development"
-    // ) {
-    //   this.baseUrl = import.meta.env.VITE_URL!;
-    // } else {
-    //   this.baseUrl = "localhost:8080";
-    // }
-
-    this.baseUrl = `http://localhost:8080/temperature`;
+    if (
+      !import.meta.env.NODE_ENV ||
+      import.meta.env.NODE_ENV === "development"
+    ) {
+      this.baseUrl = import.meta.env.VITE_URL!;
+    } else {
+      this.baseUrl = "http://192.168.2.63/api";
+    }
   }
 
   async get<T>(route: string): Promise<AxiosResponse<T>> {

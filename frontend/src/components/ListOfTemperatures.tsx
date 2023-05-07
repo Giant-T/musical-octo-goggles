@@ -1,5 +1,4 @@
 import { Group, Loader, Pagination, Select, Stack, Table, Text } from "@mantine/core";
-import { IconArrowDown } from "@tabler/icons-react";
 import { ReactElement, useEffect, useState } from "react";
 import Temperature from "../models/temperature";
 import RequestsService from "../services/requests.service";
@@ -12,7 +11,7 @@ const ListOfTemperatures = (): ReactElement => {
 
   useEffect(() => {
     new RequestsService()
-      .get<[Temperature]>("all")
+      .get<[Temperature]>("temperature/all")
       .then((response) => {
         setTemperatures(response.data);
       })
