@@ -10,17 +10,18 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 #include <SPI.h>
+#include <Servo.h>
 #include <WiFiClient.h>
 #include <WiFiNINA.h>
 
-char ssid[] = "Domotique-Pedago";
-char pass[] = "domoinfo36";
+char ssid[] = "BELL125";
+char pass[] = "5EC4CA979615";
 int status = WL_IDLE_STATUS;
 
 WiFiServer server(80);
 
 // Variables du serveur raspberry pi
-char ip[] = "172.19.240.2";
+char ip[] = "192.168.2.63";
 int port = 8080;
 WiFiClient wifi;
 HttpClient client = HttpClient(wifi, ip, port);
@@ -28,7 +29,13 @@ HttpClient client = HttpClient(wifi, ip, port);
 DHT dht(2, DHT11);
 float temperature;
 
-#define PIN_MOTEUR 3
+#define PIN_MOTEUR 6
+Servo servo;
+
+#define PIN_LED 7
+int distance_intrusion;
+bool intrusion = false;
+#define INTRUSION_TRESHOLD 10;
 
 // Capteur ultrasonique
 #define PIN_TRIG 4
@@ -66,22 +73,36 @@ void setup() {
     print_wifi_status();  // you're connected now, so print out the status
 
     dht.begin();
+    servo.attach(PIN_MOTEUR);
 
-    pinMode(PIN_MOTEUR, OUTPUT);
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(PIN_TRIG, OUTPUT);
     pinMode(PIN_ECHO, INPUT);
+    pinMode(PIN_LED, OUTPUT);
+
+    calculer_dist();
+
+    distance_intrusion = distance;
 }
 
 void loop() {
+    if (intrusion) {
+        Serial.println("INTRUSION DETECTEE");
+        digitalWrite(PIN_LED, HIGH);
+        delay(1000);
+        digitalWrite(PIN_LED, LOW);
+        delay(1000);
+        return;
+    }
     WiFiClient client = server.available();  // listen for incoming clients
 
     gerer_requetes(client);
     calculer_dist();
+    detecter_intrusion();
 
-    Serial.print("Distance cm: ");
-    Serial.println(distance);
     temperature = dht.readTemperature();
+
+    servo.write(map(temperature, 0, 40, 0, 180));
 
     envoie_donnees(temperature);
 }
@@ -156,6 +177,32 @@ void calculer_dist() {
     long duration = pulseIn(PIN_ECHO, HIGH);
 
     distance = duration * 0.034 / 2;
+}
+
+void detecter_intrusion() {
+    intrusion = abs(distance_intrusion - distance) > INTRUSION_TRESHOLD;
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.print(" Distance intrusion: ");
+    Serial.println(distance_intrusion);
+
+    if (intrusion) {
+        if (WiFi.status() != WL_CONNECTED) {
+            Serial.println("INTRUSION DETECTEE");
+            return;
+        }
+
+        Serial.println("Envoie des donnees d'intrusion.");
+
+        String sortie = "";
+        String content_type = "application/json";
+        client.post("/intrusion", content_type, sortie);
+        int etat_http = client.responseStatusCode();
+        client.responseBody();
+
+        Serial.print("Code d'etat HTTP: ");
+        Serial.println(etat_http);
+    }
 }
 
 void print_wifi_status() {

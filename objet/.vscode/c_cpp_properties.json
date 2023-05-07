@@ -29,6 +29,7 @@
                 "C:\\Users\\willy\\OneDrive\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
                 "C:\\Users\\willy\\OneDrive\\Documents\\Arduino\\libraries\\DHT_sensor_library",
                 "C:\\Users\\willy\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.8.13\\libraries\\SPI",
+                "C:\\Users\\willy\\OneDrive\\Documents\\Arduino\\libraries\\Servo\\src",
                 "C:\\Users\\willy\\OneDrive\\Documents\\Arduino\\libraries\\WiFiNINA\\src",
                 "C:\\Users\\willy\\OneDrive\\Documents\\Arduino\\libraries\\Adafruit_Unified_Sensor",
                 "c:\\users\\willy\\appdata\\local\\arduino15\\packages\\arduino\\tools\\arm-none-eabi-gcc\\7-2017q4\\arm-none-eabi\\include\\c++\\7.2.1",
@@ -503,8 +504,7 @@
                 "__ATOMIC_ACQ_REL=4",
                 "__ATOMIC_RELEASE=3",
                 "USBCON"
-            ],
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+            ]
         }
     ]
 }
