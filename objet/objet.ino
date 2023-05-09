@@ -9,6 +9,7 @@
 #include <ArduinoHttpClient.h>
 #include <ArduinoJson.h>
 #include <DHT.h>
+#include <SD.h>
 #include <SPI.h>
 #include <Servo.h>
 #include <WiFiClient.h>
@@ -21,18 +22,22 @@ int status = WL_IDLE_STATUS;
 WiFiServer server(80);
 
 // Variables du serveur raspberry pi
-char ip[] = "192.168.2.63";
+char ip[] = "192.168.2.23";
 int port = 8080;
 WiFiClient wifi;
 HttpClient client = HttpClient(wifi, ip, port);
 
+// Capteur de temperature
 DHT dht(2, DHT11);
 float temperature;
+bool envoie = true;
 
+// Servomoteur
 #define PIN_MOTEUR 6
 Servo servo;
 
-#define PIN_LED 7
+// Intrusion
+#define PIN_LED_INTRUSION 8
 int distance_intrusion;
 bool intrusion = false;
 #define INTRUSION_TRESHOLD 10;
@@ -41,6 +46,9 @@ bool intrusion = false;
 #define PIN_TRIG 4
 #define PIN_ECHO 5
 int distance;
+
+// Carte microsd
+File fichier;
 
 const unsigned long delai_ms = 10000;  // dix secondes
 unsigned long dernier_ms = 0;
@@ -76,21 +84,31 @@ void setup() {
     servo.attach(PIN_MOTEUR);
 
     pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
     pinMode(PIN_TRIG, OUTPUT);
     pinMode(PIN_ECHO, INPUT);
-    pinMode(PIN_LED, OUTPUT);
+    pinMode(PIN_LED_INTRUSION, OUTPUT);
 
     calculer_dist();
 
     distance_intrusion = distance;
+
+    if (!SD.begin()) {
+        Serial.println("Impossible de lancer le module SD.");
+        while (true) {
+        }
+    }
+
+    envoie_donnees(jsonifier_sd());
+    SD.remove("data.txt");
 }
 
 void loop() {
     if (intrusion) {
         Serial.println("INTRUSION DETECTEE");
-        digitalWrite(PIN_LED, HIGH);
+        digitalWrite(PIN_LED_INTRUSION, HIGH);
         delay(1000);
-        digitalWrite(PIN_LED, LOW);
+        digitalWrite(PIN_LED_INTRUSION, LOW);
         delay(1000);
         return;
     }
@@ -104,7 +122,9 @@ void loop() {
 
     servo.write(map(temperature, 0, 40, 0, 180));
 
-    envoie_donnees(temperature);
+    if (envoie) {
+        envoie_donnee(temperature);
+    }
 }
 
 void gerer_requetes(WiFiClient client) {
@@ -150,12 +170,14 @@ void gerer_requetes(WiFiClient client) {
                     Serial.println();
                     Serial.println("L'envoie de donnees est en arret.");
                     digitalWrite(LED_BUILTIN, LOW);
+                    envoie = false;
                 }
 
                 if (currentLine.endsWith("GET /demarrer")) {
                     Serial.println();
                     Serial.println("L'envoie de donnees est en marche.");
                     digitalWrite(LED_BUILTIN, HIGH);
+                    envoie = true;
                 }
             }
         }
@@ -202,6 +224,7 @@ void detecter_intrusion() {
 
         Serial.print("Code d'etat HTTP: ");
         Serial.println(etat_http);
+        client.stop();
     }
 }
 
@@ -231,7 +254,7 @@ void print_wifi_status() {
  * Fonction qui permet l'envoie des donnees seulement si le delais est depassé.
  * Auteur: William Boudreault
  */
-void envoie_donnees(float valeur) {
+void envoie_donnee(float valeur) {
     unsigned long ms = millis();
     bool delais_depasse = ms - dernier_ms > delai_ms;
 
@@ -241,7 +264,7 @@ void envoie_donnees(float valeur) {
     dernier_ms = ms;
 
     if (WiFi.status() != WL_CONNECTED) {
-        Serial.println(valeur);
+        ecrire_sd(valeur);
         return;
     }
 
@@ -255,8 +278,76 @@ void envoie_donnees(float valeur) {
     String content_type = "application/json";
     client.post("/temperature", content_type, sortie);
     int etat_http = client.responseStatusCode();
+
     client.responseBody();
 
     Serial.print("Code d'etat HTTP: ");
     Serial.println(etat_http);
+    if (etat_http != 201) {
+        ecrire_sd(valeur);
+    }
+    client.stop();
+}
+
+void ecrire_sd(float valeur) {
+    fichier = SD.open("data.txt", FILE_WRITE);
+
+    if (fichier == NULL) return;
+
+    Serial.println("Ecriture sur la carte...");
+    fichier.print(valeur);
+    fichier.print(';');
+    fichier.close();
+}
+
+String jsonifier_sd() {
+    fichier = SD.open("data.txt", FILE_READ);
+
+    if (fichier == NULL) return "[]";
+
+    String data = "";
+
+    data = fichier.readString();
+
+    String json = "[";
+
+    String curr_value = "";
+    for (int index = 0; index < data.length(); index++) {
+        char curr_char = data[index];
+        if (curr_char == ';') {
+            json += "{\"value_celsius\":" + curr_value + '}';
+
+            if (index != data.length() - 1) {
+                json += ',';
+            }
+
+            curr_value = "";
+            continue;
+        }
+
+        curr_value += curr_char;
+    }
+
+    json += ']';
+
+    fichier.close();
+    return json;
+}
+
+void envoie_donnees(String valeurs) {
+    if (WiFi.status() != WL_CONNECTED) {
+        return;
+    }
+
+    Serial.println("Envoie des donnees.");
+
+    String content_type = "application/json";
+    client.post("/temperature/many", content_type, valeurs);
+    int etat_http = client.responseStatusCode();
+
+    client.responseBody();
+
+    Serial.print("Code d'etat HTTP: ");
+    Serial.println(etat_http);
+    client.stop();
 }
