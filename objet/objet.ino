@@ -30,13 +30,14 @@ HttpClient client = HttpClient(wifi, ip, port);
 // Capteur de temperature
 DHT dht(2, DHT11);
 float temperature;
+bool envoie = true;
 
 // Servomoteur
 #define PIN_MOTEUR 6
 Servo servo;
 
 // Intrusion
-#define PIN_LED 7
+#define PIN_LED_INTRUSION 8
 int distance_intrusion;
 bool intrusion = false;
 #define INTRUSION_TRESHOLD 10;
@@ -83,9 +84,10 @@ void setup() {
     servo.attach(PIN_MOTEUR);
 
     pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
     pinMode(PIN_TRIG, OUTPUT);
     pinMode(PIN_ECHO, INPUT);
-    pinMode(PIN_LED, OUTPUT);
+    pinMode(PIN_LED_INTRUSION, OUTPUT);
 
     calculer_dist();
 
@@ -98,15 +100,15 @@ void setup() {
     }
 
     envoie_donnees(jsonifier_sd());
-    SD.open("data.txt", FILE_WRITE | O_TRUNC).close();
+    SD.remove("data.txt");
 }
 
 void loop() {
     if (intrusion) {
         Serial.println("INTRUSION DETECTEE");
-        digitalWrite(PIN_LED, HIGH);
+        digitalWrite(PIN_LED_INTRUSION, HIGH);
         delay(1000);
-        digitalWrite(PIN_LED, LOW);
+        digitalWrite(PIN_LED_INTRUSION, LOW);
         delay(1000);
         return;
     }
@@ -120,7 +122,9 @@ void loop() {
 
     servo.write(map(temperature, 0, 40, 0, 180));
 
-    envoie_donnee(temperature);
+    if (envoie) {
+        envoie_donnee(temperature);
+    }
 }
 
 void gerer_requetes(WiFiClient client) {
@@ -166,12 +170,14 @@ void gerer_requetes(WiFiClient client) {
                     Serial.println();
                     Serial.println("L'envoie de donnees est en arret.");
                     digitalWrite(LED_BUILTIN, LOW);
+                    envoie = false;
                 }
 
                 if (currentLine.endsWith("GET /demarrer")) {
                     Serial.println();
                     Serial.println("L'envoie de donnees est en marche.");
                     digitalWrite(LED_BUILTIN, HIGH);
+                    envoie = true;
                 }
             }
         }
@@ -297,7 +303,7 @@ void ecrire_sd(float valeur) {
 String jsonifier_sd() {
     fichier = SD.open("data.txt", FILE_READ);
 
-    if (fichier == NULL) return "{}";
+    if (fichier == NULL) return "[]";
 
     String data = "";
 
