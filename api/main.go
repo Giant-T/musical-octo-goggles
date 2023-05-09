@@ -48,6 +48,8 @@ func main() {
 	server.POST("/temperature", controller.CreateTemperature)
 	server.POST("/temperature/many", controller.CreateManyTemperatures)
 	server.POST("/intrusion", controller.InsertIntrusion)
+	server.GET("/demarrer", controller.DemarrerObjet)
+	server.GET("/stop", controller.StopObjet)
 
 	err = server.Run(":8080")
 

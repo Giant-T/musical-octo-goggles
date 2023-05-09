@@ -2,18 +2,12 @@ package api
 
 import (
 	"net/http"
-	"time"
+	"os"
 
 	"github.com/Giant-T/musical-octo-goggles/schemas"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
-
-type createManyTemperaturesDto struct {
-	Id           uint      `json:"id" binding:"excluded_with_all"`
-	ValueCelsius float32   `json:"value_celsius" binding:"required"`
-	Date         time.Time `json:"date" binding:"required"`
-}
 
 type PublicController struct {
 	Database *gorm.DB
@@ -45,14 +39,18 @@ func (controller *PublicController) CreateTemperature(context *gin.Context) {
 
 // Insert plusieurs températures dans la base de données.
 func (controller *PublicController) CreateManyTemperatures(context *gin.Context) {
-	var body []createManyTemperaturesDto
+	var body []schemas.Temperature
 
 	if err := context.BindJSON(&body); err != nil {
 		context.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	controller.Database.Model(&schemas.Temperature{}).Create(&body)
+	if len(body) == 0 {
+		return
+	}
+
+	controller.Database.Create(&body)
 	context.JSON(http.StatusCreated, &body)
 }
 
@@ -60,4 +58,14 @@ func (controller *PublicController) InsertIntrusion(context *gin.Context) {
 	var json schemas.Intrusion
 	controller.Database.Create(&json)
 	context.JSON(http.StatusCreated, &json)
+}
+
+func (controller *PublicController) StopObjet(context *gin.Context) {
+  http.Get(os.Getenv("ARDUINO_URL") + "/stop")
+	context.JSON(http.StatusOK, true)
+}
+
+func (controller *PublicController) DemarrerObjet(context *gin.Context) {
+  http.Get(os.Getenv("ARDUINO_URL") + "/demarrer")
+	context.JSON(http.StatusOK, true)
 }
