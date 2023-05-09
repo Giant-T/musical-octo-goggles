@@ -3,6 +3,7 @@ import { notifications } from "@mantine/notifications";
 import { IconCheck, IconInfoCircleFilled } from "@tabler/icons-react";
 import { ReactElement } from "react"
 import Page from "../components/Page";
+import RequestsService from "../services/requests.service";
 
 const Activation = (): ReactElement => {
   const showError = () => {
@@ -12,13 +13,22 @@ const Activation = (): ReactElement => {
       color: "red",
       icon: (<IconInfoCircleFilled />),
     });
+  };
+
+  const showSuccess = () => {
     notifications.show({
-      title: "Succès",
-      message: "Action effectuée avec succès",
+      title: "Opération réussie",
+      message: "L'action a été réalisée avec succès.",
       color: "green",
       icon: (<IconCheck />),
     });
   };
+
+  const sendActivation = (activate: "demarrer" | "stop") => {
+    new RequestsService().get(activate)
+      .then(showSuccess)
+      .catch(showError);
+  }
 
   return (
     <Page>
@@ -27,14 +37,14 @@ const Activation = (): ReactElement => {
         <Button
           variant="gradient"
           gradient={{ from: "teal", to: "lime" }}
-          onClick={showError}
+          onClick={() => sendActivation("demarrer")}
         >
           Activer le capteur
         </Button>
         <Button
           variant="gradient"
           gradient={{ from: "red", to: "orange" }}
-          onClick={showError}>
+          onClick={() => sendActivation("stop")}>
           Désactiver le capteur
         </Button>
       </Group>
