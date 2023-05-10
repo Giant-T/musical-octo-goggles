@@ -71,11 +71,23 @@ func (controller *PublicController) GetAllIntrusion(context *gin.Context) {
 }
 
 func (controller *PublicController) StopObjet(context *gin.Context) {
-	http.Get(os.Getenv("ARDUINO_URL") + "/stop")
+	_, err := http.Get(os.Getenv("ARDUINO_URL") + "/stop")
+
+	if err != nil {
+		context.JSON(http.StatusNotFound, false)
+		return
+	}
+
 	context.JSON(http.StatusOK, true)
 }
 
 func (controller *PublicController) DemarrerObjet(context *gin.Context) {
-	http.Get(os.Getenv("ARDUINO_URL") + "/demarrer")
+	_, err := http.Get(os.Getenv("ARDUINO_URL") + "/demarrer")
+
+	if err != nil {
+		context.JSON(http.StatusNotFound, false)
+		return
+	}
+
 	context.JSON(http.StatusOK, true)
 }
