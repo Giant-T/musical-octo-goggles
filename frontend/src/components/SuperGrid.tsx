@@ -38,6 +38,11 @@ const SuperGrid = (props: SuperGridProps): ReactElement => {
     return rows;
   }
 
+  const changeSize = (size: number = 5) => {
+    setPageSize(size);
+    setPage(Math.min(activePage, Math.ceil(props.rows.length / size)));
+  };
+
   return (
     <Stack>
       <Table striped withBorder withColumnBorders>
@@ -58,7 +63,7 @@ const SuperGrid = (props: SuperGridProps): ReactElement => {
           width={10}
           defaultValue="5"
           data={["5", "10", "15", "20"]}
-          onChange={(value) => setPageSize(Number(value ?? 5))}
+          onChange={(text) => changeSize(Number(text))}
         />
         <Pagination
           value={activePage}
