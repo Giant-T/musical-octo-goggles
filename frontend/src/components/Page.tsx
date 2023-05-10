@@ -32,6 +32,7 @@ export default function Page(props: PropsWithChildren) {
             <Divider orientation='vertical' />
             <Link to="/">Accueil</Link>
             <Link to="/activation">Activation</Link>
+            <Link to="/intrusions">Intrusions</Link>
           </Group>
         </Header>
       }

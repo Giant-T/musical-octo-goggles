@@ -8,12 +8,17 @@ import {
 } from "react-router-dom";
 import Page404 from "./pages/404";
 import Activation from "./pages/Activation";
+import Intrusions from "./pages/Intrusions";
 import App from "./pages/App";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/intrusions",
+    element: <Intrusions />,
   },
   {
     path: "/404",

@@ -60,12 +60,22 @@ func (controller *PublicController) InsertIntrusion(context *gin.Context) {
 	context.JSON(http.StatusCreated, &json)
 }
 
+func (controller *PublicController) GetAllIntrusion(context *gin.Context) {
+	var intrusions []schemas.Intrusion
+
+	controller.Database.
+		Order("date desc").
+		Find(&intrusions)
+
+	context.JSON(http.StatusOK, intrusions)
+}
+
 func (controller *PublicController) StopObjet(context *gin.Context) {
-  http.Get(os.Getenv("ARDUINO_URL") + "/stop")
+	http.Get(os.Getenv("ARDUINO_URL") + "/stop")
 	context.JSON(http.StatusOK, true)
 }
 
 func (controller *PublicController) DemarrerObjet(context *gin.Context) {
-  http.Get(os.Getenv("ARDUINO_URL") + "/demarrer")
+	http.Get(os.Getenv("ARDUINO_URL") + "/demarrer")
 	context.JSON(http.StatusOK, true)
 }
