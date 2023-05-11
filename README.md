@@ -4,9 +4,17 @@ par William Boudreault
 ### Matériel nécessaire
 - Arduino NANO 33 IoT
 - DHT11
+- SD module
+- Servo moteur
+- Led bleu
+- Capteur ultrasonique
 
-### Connection nécessaires
-- DHT11 connecté sur la broche 2.
+### Connexions nécessaires
+- DHT11 | broche 2.
+- Servo moteur | broche 6
+- Led | broche 8
+- Capteur ultrasonique | trig: broche 4, echo: broche 5
+- SD module | cs: broche 10
 
 ## Technologies utilisées
 - Go & Gin & Gorm
