@@ -1,0 +1,41 @@
+# The Caddyfile is an easy way to configure your Caddy web server.
+#
+# Unless the file starts with a global options block, the first
+# uncommented line is always the address of your site.
+#
+# To use your own domain name (with automatic HTTPS), first make
+# sure your domain's A/AAAA DNS records are properly pointed to
+# this machine's public IP, then replace ":80" below with your
+# domain name.
+
+# source: https://kalnytskyi.com/posts/setup-cors-caddy-2/
+# source: https://caddy.community/t/implementing-cors-whitelist-in-caddy-v2/8590/2
+(cors) {
+	@origin header Origin {args.0}
+	header @origin Access-Control-Allow-Origin "{args.0}"
+	header @origin Access-Control-Request-Method GET
+}
+
+:80 {
+	import cors *
+
+	# Utilisation de react pour le site ordinaire
+	handle {
+		root * /var/www/monsite/app
+		file_server
+		try_files {path} /index.html
+	}
+
+	handle_path /api/* {
+		reverse_proxy localhost:8080
+	}
+
+	# Another common task is to set up a reverse proxy:
+	# reverse_proxy localhost:8080
+
+	# Or serve a PHP site through php-fpm:
+	# php_fastcgi localhost:9000
+}
+
+# Refer to the Caddy docs for more information:
+# https://caddyserver.com/docs/caddyfile
