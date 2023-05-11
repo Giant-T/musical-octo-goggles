@@ -1,0 +1,21 @@
+[Unit]
+Description=Mon service d'api
+ConditionPathExists=/home/will/api
+After=network.target
+
+[Service]
+Type=simple
+User=will
+
+WorkingDirectory=/home/will/api
+ExecStart=/home/will/api/main
+
+Restart=on-failure
+RestartSec=10
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=apigoservice
+
+[Install]
+WantedBy=multi-user.target
